@@ -175,7 +175,7 @@
     nextBtn.onclick = ()=>{ currentPage++; render(); };
 
     const pageInfo = document.createElement('span');
-    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages} • Total: ${data.length} links`;
 
     paginationEl.append(prevBtn, pageInfo, nextBtn);
   }
