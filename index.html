@@ -2,298 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Office Outing — Mini Games</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>URL List — Simple Bookmarker</title>
   <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
-      --success:#16a34a; --danger:#ef4444;
-      font-synthesis: none;
-    }
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass:rgba(255,255,255,0.03)}
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#071029 0%, #081226 100%); color:#e6eef6; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px}
-    .container{width:100%;max-width:1100px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    header h1{font-size:20px;margin:0}
-    header p{color:var(--muted);margin:0;font-size:13px}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#071025 0%,#07162a 100%);color:#e6eef6;margin:0;padding:24px}
+    .container{max-width:900px;margin:0 auto}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
 
-    .grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
-    nav{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    nav button{display:block;width:100%;background:transparent;border:0;color:inherit;padding:10px 12px;border-radius:8px;text-align:left;cursor:pointer;font-size:14px}
-    nav button.active{background:linear-gradient(90deg, rgba(6,182,212,0.12), rgba(6,182,212,0.06));border-left:3px solid var(--accent)}
+    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,.6);}
+    form{display:flex;gap:8px;flex-wrap:wrap}
+    input[type=text]{flex:1;min-width:180px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+    button{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),#7c3aed);color:#021026;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
 
-    main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;min-height:420px;box-shadow:0 6px 28px rgba(2,6,23,0.6)}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:12px}
+    .search{margin-left:auto}
 
-    .game-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .game-title h2{margin:0;font-size:18px}
-    .controls{display:flex;gap:10px}
-    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:inherit;cursor:pointer}
-    .btn.primary{background:linear-gradient(90deg,var(--accent), #60a5fa);color:#021025;border:none}
+    ul.list{list-style:none;padding:0;margin:18px 0 0 0;display:grid;gap:10px}
+    li.item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .favicon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);font-weight:700}
+    .meta{flex:1;min-width:0}
+    .meta a{color:#d6f9ff;text-decoration:none;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .muted{color:var(--muted);font-size:13px}
+    .item .actions{display:flex;gap:6px}
+    .small{padding:6px 8px;font-size:13px;border-radius:6px}
 
-    /* QUIZ */
-    .quiz-question{font-size:16px;margin-bottom:12px}
-    .options{display:grid;gap:8px}
-    .option{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
-    .option.correct{outline:2px solid rgba(22,163,74,0.2);border-color:var(--success);}
-    .option.wrong{outline:2px solid rgba(239,68,68,0.12);border-color:var(--danger)}
-
-    /* Memory */
-    .grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:10px}
-    .card{aspect-ratio:1/1;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;user-select:none}
-    .card.flipped{background:var(--accent);color:#01202a}
-
-    /* Reaction */
-    .playfield{position:relative;height:260px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));overflow:hidden}
-    .target{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;transform:translate(-50%,-50%)}
-
-    /* RPS */
-    .rps-row{display:flex;gap:12px;align-items:center}
-    .rps-btn{padding:12px 18px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);cursor:pointer}
-
-    footer.small{margin-top:14px;color:var(--muted);font-size:13px}
-
-    @media (max-width:880px){.grid{grid-template-columns:1fr;}.container{padding:8px}}
+    @media (max-width:560px){header{flex-direction:column;align-items:flex-start} form{width:100%}}
   </style>
 </head>
 <body>
   <div class="container">
     <header>
       <div>
-        <h1>Office Outing — Mini Games</h1>
-        <p>Play quick games in the browser: Quiz · Memory · Reaction · RPS — Track team scores locally</p>
-      </div>
-      <div class="controls">
-        <button id="resetScores" class="btn">Reset Scores</button>
-        <button id="download" class="btn primary">Download HTML</button>
+        <h1>URL List — Simple Bookmarker</h1>
+        <p class="lead">Add, search, open, copy, edit, and remove URLs. Stored locally in your browser.</p>
       </div>
     </header>
 
-    <div class="grid">
-      <nav>
-        <button class="tab-btn active" data-tab="quiz">1 — Quiz (Trivia)</button>
-        <button class="tab-btn" data-tab="memory">2 — Memory Match</button>
-        <button class="tab-btn" data-tab="reaction">3 — Reaction Click</button>
-        <button class="tab-btn" data-tab="rps">4 — Rock Paper Scissors</button>
-        <hr style="border:none;border-top:1px dashed rgba(255,255,255,0.02);margin:10px 0">
-        <div style="font-size:13px;color:var(--muted)">Local scores</div>
-        <div id="scoreboard" style="margin-top:8px"></div>
-      </nav>
+    <section class="card" aria-labelledby="addUrlHeading">
+      <h2 id="addUrlHeading" style="display:none">Add URL</h2>
+      <form id="addForm">
+        <label for="title" class="sr-only" style="display:none">Title (optional)</label>
+        <input type="text" id="title" name="title" placeholder="Title (optional)" aria-label="Title (optional)">
+        <label for="url" class="sr-only" style="display:none">URL</label>
+        <input type="text" id="url" name="url" placeholder="https://example.com" aria-label="URL" required>
+        <button id="addBtn" type="submit">Add</button>
+        <button id="clearBtn" type="button" class="ghost">Clear All</button>
+      </form>
 
-      <main>
-        <div id="content">
-          <!-- QUIZ -->
-          <section id="quiz" class="tab" style="display:block">
-            <div class="game-title">
-              <h2>Trivia Quickfire</h2>
-              <div id="quiz-info" style="color:var(--muted);font-size:13px">Score: <span id="quizScore">0</span> · Q <span id="quizIndex">1</span>/5</div>
-            </div>
-            <div class="quiz-question" id="quizQuestion">Loading...</div>
-            <div class="options" id="quizOptions"></div>
-            <div style="margin-top:12px;display:flex;gap:8px">
-              <button id="nextQ" class="btn">Next</button>
-              <button id="shuffleQuiz" class="btn">Shuffle Questions</button>
-            </div>
-          </section>
+      <div class="controls">
+        <div class="muted">Total: <span id="count">0</span></div>
+        <input id="search" class="search" type="text" placeholder="Search..." aria-label="Search URLs">
+        <select id="sort" aria-label="Sort list">
+          <option value="new">Newest</option>
+          <option value="old">Oldest</option>
+          <option value="alpha">A → Z</option>
+        </select>
+      </div>
 
-          <!-- MEMORY -->
-          <section id="memory" class="tab" style="display:none">
-            <div class="game-title">
-              <h2>Memory Match</h2>
-              <div style="color:var(--muted);font-size:13px">Pairs found: <span id="pairsFound">0</span>/<span id="totalPairs">6</span></div>
-            </div>
-            <div class="grid-cards" id="memoryGrid"></div>
-            <div style="margin-top:12px;display:flex;gap:8px"><button id="restartMemory" class="btn">Restart</button></div>
-          </section>
+      <ul id="list" class="list" aria-live="polite" aria-label="Saved URLs"></ul>
+    </section>
 
-          <!-- REACTION -->
-          <section id="reaction" class="tab" style="display:none">
-            <div class="game-title">
-              <h2>Reaction Click</h2>
-              <div style="color:var(--muted);font-size:13px">Best time: <span id="bestTime">—</span> ms</div>
-            </div>
-            <div class="playfield" id="playfield">
-              <div id="target" class="target" style="left:50%;top:50%;">Go</div>
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px"><button id="startReaction" class="btn primary">Start</button><button id="stopReaction" class="btn">Stop</button></div>
-          </section>
-
-          <!-- RPS -->
-          <section id="rps" class="tab" style="display:none">
-            <div class="game-title">
-              <h2>Rock · Paper · Scissors</h2>
-              <div style="color:var(--muted);font-size:13px">First to 3 wins!</div>
-            </div>
-            <div style="margin-bottom:12px">Choose:</div>
-            <div class="rps-row">
-              <button class="rps-btn" data-move="rock">✊ Rock</button>
-              <button class="rps-btn" data-move="paper">🖐️ Paper</button>
-              <button class="rps-btn" data-move="scissors">✌️ Scissors</button>
-            </div>
-            <div style="margin-top:16px;color:var(--muted)">
-              <div>Round: <span id="rpsRound">0</span></div>
-              <div>Result: <span id="rpsResult">—</span></div>
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px"><button id="resetRPS" class="btn">Reset RPS</button></div>
-          </section>
-
-        </div>
-
-        <footer class="small">Tip: open this file in any modern browser. Scores stored in localStorage per browser.</footer>
-      </main>
-    </div>
+    <footer style="margin-top:14px;color:var(--muted);font-size:13px">Tip: This page stores data locally. To export, use the Export button (JSON).</footer>
   </div>
 
   <script>
-    /* ---------- App state ---------- */
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(btn=>btn.addEventListener('click',()=>{
-      tabs.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
-      document.getElementById(btn.dataset.tab).style.display='block';
-    }));
+    // Simple accessible URL list app that stores data in localStorage
+    const KEY = 'simple_url_list_v1';
+    let data = JSON.parse(localStorage.getItem(KEY) || '[]');
 
-    // Scoreboard (localStorage)
-    const SCORE_KEY = 'office_outing_scores_v1';
-    let scoreboard = JSON.parse(localStorage.getItem(SCORE_KEY) || '{}');
-    function saveScores(){ localStorage.setItem(SCORE_KEY, JSON.stringify(scoreboard)); renderScores(); }
-    function renderScores(){
-      const el = document.getElementById('scoreboard');
-      if(Object.keys(scoreboard).length===0){ el.innerHTML = '<div style="color:var(--muted);font-size:13px">No scores yet — play and add a name!</div>'; return }
-      el.innerHTML = Object.entries(scoreboard).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0"><strong>${k}</strong><span style="color:var(--muted)">${v}</span></div>`).join('');
-    }
-    renderScores();
-    document.getElementById('resetScores').addEventListener('click',()=>{ if(confirm('Reset all local scores?')){scoreboard={}; saveScores();}})
+    const listEl = document.getElementById('list');
+    const countEl = document.getElementById('count');
+    const addForm = document.getElementById('addForm');
+    const titleInput = document.getElementById('title');
+    const urlInput = document.getElementById('url');
+    const searchInput = document.getElementById('search');
+    const sortSelect = document.getElementById('sort');
+    const clearBtn = document.getElementById('clearBtn');
 
-    document.getElementById('download').addEventListener('click', ()=>{
-      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='office-outing-minigames.html'; a.click(); URL.revokeObjectURL(url);
-    });
+    function save() { localStorage.setItem(KEY, JSON.stringify(data)); render(); }
 
-    /* ---------- QUIZ GAME ---------- */
-    const quizData = [
-      {q:'Which country invented instant noodles?', a:['Japan','South Korea','China','USA'], correct:2},
-      {q:'What year did the internet become widely available to the public?', a:['1983','1991','1998','2004'], correct:1},
-      {q:'Which of these is NOT a JavaScript framework?', a:['React','Django','Vue','Angular'], correct:1},
-      {q:'Which planet is known as the Red Planet?', a:['Venus','Mars','Jupiter','Saturn'], correct:1},
-      {q:'How many minutes are in 2 hours and 15 minutes?', a:['125','120','135','150'], correct:0}
-    ];
-    let quizIndex=0, quizScore=0, quizOrder = shuffle([...Array(quizData.length).keys()]);
-
-    function renderQuiz(){
-      const idx = quizOrder[quizIndex];
-      document.getElementById('quizIndex').textContent = quizIndex+1;
-      document.getElementById('quizScore').textContent = quizScore;
-      const Q = quizData[idx];
-      document.getElementById('quizQuestion').textContent = Q.q;
-      const opts = document.getElementById('quizOptions'); opts.innerHTML='';
-      Q.a.forEach((opt,i)=>{
-        const d = document.createElement('div'); d.className='option'; d.textContent = opt;
-        d.addEventListener('click', ()=> handleAnswer(d,i===Q.correct));
-        opts.appendChild(d);
-      });
-    }
-    function handleAnswer(el,correct){
-      // disable options
-      document.querySelectorAll('#quizOptions .option').forEach(o=>o.style.pointerEvents='none');
-      if(correct){ el.classList.add('correct'); quizScore+=10; document.getElementById('quizScore').textContent=quizScore; }
-      else{ el.classList.add('wrong'); // highlight correct
-        const idx = quizOrder[quizIndex]; const corr = quizData[idx].correct;
-        document.querySelectorAll('#quizOptions .option')[corr].classList.add('correct');
-      }
-      // prompt to add name to scoreboard
-      setTimeout(()=>{
-        const name = prompt('Enter team/player name to save score (or Cancel):');
-        if(name){ scoreboard[name] = Math.max(scoreboard[name]||0, quizScore); saveScores(); }
-      },400);
+    function validateUrl(u){
+      try { const url = new URL(u); return true; } catch(e){ return false; }
     }
 
-    document.getElementById('nextQ').addEventListener('click', ()=>{
-      quizIndex = (quizIndex+1) % quizOrder.length;
-      renderQuiz();
-    });
-    document.getElementById('shuffleQuiz').addEventListener('click', ()=>{ quizOrder = shuffle([...Array(quizData.length).keys()]); quizIndex=0; quizScore=0; renderQuiz(); });
-    renderQuiz();
+    function addItem(title, url){
+      const item = {id: Date.now().toString(), title: title || url, url: url, created: new Date().toISOString()};
+      data.unshift(item); save();
+    }
 
-    /* ---------- MEMORY GAME ---------- */
-    const icons = ['🍎','🍌','🍇','🍓','🍍','🥝','🍑','🍒'];
-    let memoryPairs = 6; // initial
-    function startMemory(){
-      const grid = document.getElementById('memoryGrid'); grid.innerHTML='';
-      const pairs = icons.slice(0,memoryPairs);
-      const deck = shuffle([...pairs,...pairs]);
-      document.getElementById('totalPairs').textContent = memoryPairs;
-      let flippedIndex = null; let found = 0;
-      deck.forEach((val,i)=>{
-        const c = document.createElement('div'); c.className='card'; c.dataset.val=val; c.dataset.idx=i; c.textContent='?';
-        c.addEventListener('click', ()=>{
-          if(c.classList.contains('flipped') || c.classList.contains('found')) return;
-          c.classList.add('flipped'); c.textContent = val;
-          if(flippedIndex===null){ flippedIndex = i; }
-          else{
-            const first = grid.querySelector('[data-idx="'+flippedIndex+'"]');
-            if(first.dataset.val === c.dataset.val){ // matched
-              first.classList.add('found'); c.classList.add('found'); found++; document.getElementById('pairsFound').textContent = found;
-              if(found===memoryPairs){ setTimeout(()=>{ const name=prompt('You matched all pairs! Save score name?'); if(name){ scoreboard[name] = (scoreboard[name]||0)+100; saveScores(); }},300) }
-            } else { // not matched
-              setTimeout(()=>{ first.classList.remove('flipped'); first.textContent='?'; c.classList.remove('flipped'); c.textContent='?'; },800);
-            }
-            flippedIndex = null;
-          }
+    function removeItem(id){ data = data.filter(i => i.id !== id); save(); }
+    function editItem(id, newTitle, newUrl){ data = data.map(i => i.id===id?{...i,title:newTitle||newUrl,url:newUrl}:i); save(); }
+
+    function copyToClipboard(text){ navigator.clipboard?.writeText(text).catch(()=>{}); }
+
+    function openInNewTab(url){ window.open(url, '_blank', 'noopener'); }
+
+    function render(){
+      // sort
+      let out = [...data];
+      const sort = sortSelect.value;
+      if(sort==='alpha') out.sort((a,b)=>a.title.localeCompare(b.title));
+      else if(sort==='old') out.reverse(); // because newest are at start
+
+      const q = searchInput.value.trim().toLowerCase();
+      if(q) out = out.filter(i => (i.title + ' ' + i.url).toLowerCase().includes(q));
+
+      listEl.innerHTML = '';
+      if(out.length===0){ listEl.innerHTML='<li class="muted">No URLs yet. Add one above.</li>'; }
+      out.forEach(item => {
+        const li = document.createElement('li'); li.className='item';
+
+        const fav = document.createElement('div'); fav.className='favicon';
+        // simple favicon: first letter
+        fav.textContent = (item.title || item.url)[0].toUpperCase();
+
+        const meta = document.createElement('div'); meta.className='meta';
+        const a = document.createElement('a'); a.href = item.url; a.target='_blank'; a.rel='noopener'; a.textContent = item.title;
+        a.title = item.url;
+        const small = document.createElement('div'); small.className='muted'; small.textContent = item.url;
+        meta.appendChild(a); meta.appendChild(small);
+
+        const actions = document.createElement('div'); actions.className='actions';
+        // open
+        const openBtn = document.createElement('button'); openBtn.className='small'; openBtn.textContent='Open';
+        openBtn.addEventListener('click', ()=>openInNewTab(item.url));
+        // copy
+        const copyBtn = document.createElement('button'); copyBtn.className='small'; copyBtn.textContent='Copy';
+        copyBtn.addEventListener('click', ()=>{ copyToClipboard(item.url); copyBtn.textContent='Copied'; setTimeout(()=>copyBtn.textContent='Copy',900); });
+        // edit
+        const editBtn = document.createElement('button'); editBtn.className='small'; editBtn.textContent='Edit';
+        editBtn.addEventListener('click', ()=>{
+          const newTitle = prompt('Edit title', item.title) || item.title;
+          const newUrl = prompt('Edit URL', item.url) || item.url;
+          if(!validateUrl(newUrl)){ alert('Invalid URL. Update cancelled.'); return; }
+          editItem(item.id,newTitle,newUrl);
         });
-        grid.appendChild(c);
+        // delete
+        const delBtn = document.createElement('button'); delBtn.className='small'; delBtn.textContent='Delete';
+        delBtn.addEventListener('click', ()=>{ if(confirm('Delete this URL?')) removeItem(item.id); });
+
+        actions.appendChild(openBtn); actions.appendChild(copyBtn); actions.appendChild(editBtn); actions.appendChild(delBtn);
+
+        li.appendChild(fav); li.appendChild(meta); li.appendChild(actions);
+        listEl.appendChild(li);
       });
-      document.getElementById('pairsFound').textContent = 0;
-    }
-    document.getElementById('restartMemory').addEventListener('click', ()=> startMemory());
-    startMemory();
 
-    /* ---------- REACTION GAME ---------- */
-    let reactionRunning=false; let targetTimer=null; let startTime=0; let best=Infinity;
-    const playfield = document.getElementById('playfield'); const target = document.getElementById('target');
-    function randomPos(){
-      const w = playfield.clientWidth; const h = playfield.clientHeight; const x = Math.random()*(w-80)+40; const y = Math.random()*(h-80)+40; return {x,y};
+      countEl.textContent = data.length;
     }
-    function placeTarget(){ const p=randomPos(); target.style.left = p.x+'px'; target.style.top = p.y+'px'; }
-    function startReaction(){ if(reactionRunning) return; reactionRunning=true; target.textContent='WAIT'; target.style.pointerEvents='none';
-      const delay = Math.random()*2000+800; targetTimer = setTimeout(()=>{ placeTarget(); target.textContent='CLICK'; target.style.pointerEvents='auto'; startTime = performance.now(); }, delay);
-    }
-    function stopReaction(){ reactionRunning=false; clearTimeout(targetTimer); target.textContent='Go'; target.style.pointerEvents='none'; }
-    target.addEventListener('click', ()=>{
-      if(!reactionRunning || startTime===0) return; const t = Math.round(performance.now()-startTime); startTime=0; reactionRunning=false; target.style.pointerEvents='none';
-      alert('Reaction: '+t+' ms'); if(t<best){ best=t; document.getElementById('bestTime').textContent = best; const name=prompt('New best! Save name?'); if(name){ scoreboard[name] = Math.max(scoreboard[name]||0, best); saveScores(); }}
+
+    addForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const title = titleInput.value.trim();
+      let url = urlInput.value.trim();
+      if(!url) return;
+      // auto-add protocol if missing
+      if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      if(!validateUrl(url)){ alert('Please enter a valid URL (e.g. https://example.com)'); return; }
+      addItem(title, url);
+      titleInput.value=''; urlInput.value=''; urlInput.focus();
     });
-    document.getElementById('startReaction').addEventListener('click', startReaction);
-    document.getElementById('stopReaction').addEventListener('click', stopReaction);
 
-    /* ---------- RPS ---------- */
-    let rpsRound=0; let rpsScore = {you:0,bot:0};
-    function playRPS(move){ const choices=['rock','paper','scissors']; const bot = choices[Math.floor(Math.random()*3)];
-      rpsRound++; document.getElementById('rpsRound').textContent = rpsRound;
-      let outcome='Draw';
-      if(move===bot) outcome='Draw';
-      else if((move==='rock'&&bot==='scissors')||(move==='paper'&&bot==='rock')||(move==='scissors'&&bot==='paper')){ outcome='You win'; rpsScore.you++; }
-      else{ outcome='Bot wins'; rpsScore.bot++; }
-      document.getElementById('rpsResult').textContent = `You: ${move} — Bot: ${bot} · ${outcome} (You ${rpsScore.you} : Bot ${rpsScore.bot})`;
-      if(rpsScore.you===3 || rpsScore.bot===3){ setTimeout(()=>{
-        const winner = rpsScore.you>rpsScore.bot? 'You' : 'Bot'; const name = prompt(`${winner} reached 3 wins! Save name to scoreboard?`);
-        if(name){ scoreboard[name] = (scoreboard[name]||0) + (rpsScore.you>rpsScore.bot? 300: 50); saveScores(); }
-      },200);
-      }
-    }
-    document.querySelectorAll('.rps-btn').forEach(b=>b.addEventListener('click', ()=> playRPS(b.dataset.move)));
-    document.getElementById('resetRPS').addEventListener('click', ()=>{ rpsRound=0; rpsScore={you:0,bot:0}; document.getElementById('rpsRound').textContent=0; document.getElementById('rpsResult').textContent='—'; });
+    clearBtn.addEventListener('click', ()=>{
+      if(confirm('Clear all saved URLs? This cannot be undone.')){ data=[]; save(); }
+    });
 
-    /* ---------- Utilities ---------- */
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-      return arr;
-    }
+    searchInput.addEventListener('input', render);
+    sortSelect.addEventListener('change', render);
 
-    // small UI: when switching tabs stop running timers
-    document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click', ()=>{ stopReaction(); }));
+    // quick export/import
+    const exportBtn = document.createElement('button'); exportBtn.className='ghost small'; exportBtn.textContent='Export JSON';
+    exportBtn.addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='urls.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+    const importBtn = document.createElement('button'); importBtn.className='ghost small'; importBtn.textContent='Import JSON';
+    importBtn.addEventListener('click', ()=>{
+      const f = document.createElement('input'); f.type='file'; f.accept='application/json';
+      f.addEventListener('change', ()=>{
+        const file = f.files[0]; if(!file) return;
+        const reader = new FileReader(); reader.onload = ()=>{
+          try{ const j = JSON.parse(reader.result); if(Array.isArray(j)){ data = j.concat(data); save(); alert('Import complete'); } else alert('Invalid JSON structure'); }
+          catch(e){ alert('Invalid JSON file'); }
+        };
+        reader.readAsText(file);
+      });
+      f.click();
+    });
 
+    // attach export/import to controls
+    const controls = document.querySelector('.controls');
+    controls.appendChild(exportBtn); controls.appendChild(importBtn);
+
+    // initial render
+    render();
+
+    // Accessibility: focus visible outline
+    document.addEventListener('keydown', (e)=>{ if(e.key==='/' && document.activeElement.tagName.toLowerCase()!=='input'){ e.preventDefault(); searchInput.focus(); } });
   </script>
 </body>
 </html>
