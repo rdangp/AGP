@@ -30,11 +30,11 @@
     .muted{color:var(--muted);font-size:13px;overflow-wrap:anywhere;white-space:normal;display:none}
     .item .actions{display:flex;gap:6px}
     .small{padding:6px 8px;font-size:13px;border-radius:6px}
-    .small.delete-btn{background: #dc2626; /* red */color: white;border: none;
-}
-.small.delete-btn:hover {
-  background: #b91c1c; /* darker red on hover */
-}
+    .small.delete-btn{background: #dc2626; /* red */color: white;border:none}
+    .small.delete-btn:hover{background: #b91c1c; /* darker red on hover */}
+
+    #googleSearch input{min-width: 150px}
+    #googleSearch button:hover{opacity: 0.9}
 
     @media (max-width:560px){header{flex-direction:column;align-items:flex-start} form{width:100%}}
   </style>
@@ -67,6 +67,12 @@
           <option value="new">Newest</option>
           <option value="old">Oldest</option>
         </select>
+
+         <!-- Google Search Form -->
+        <form id="googleSearch" action="https://www.google.com/search" method="get" target="_blank" style="margin-left:auto;display:flex;gap:6px;">
+          <input type="text" name="q" placeholder="Google Search..." style="padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:var(--glass);color:inherit;">
+          <button type="submit" style="padding:6px 10px;border-radius:6px;border:none;background:var(--accent);color:#021026;cursor:pointer;">Go</button>
+        </form>
       </div>
 
       <ul id="list" class="list" aria-live="polite" aria-label="Saved URLs"></ul>
