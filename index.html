@@ -157,8 +157,8 @@
       if(!validateUrl(newUrl)){ alert('Invalid URL. Update cancelled.'); return; }
       editItem(item.id,newTitle,newUrl);
     });
-    const delBtn = document.createElement('button');
-    delBtn.className='small delete-btn';
+    const delBtn = document.createElement('button'); delBtn.className='small delete-btn'; delBtn.textContent='Delete';
+    delBtn.addEventListener('click', ()=>{ if(confirm('Delete this URL?')) removeItem(item.id); });
 
     actions.append(openBtn, copyBtn, editBtn, delBtn);
     li.append(fav, meta, actions);
