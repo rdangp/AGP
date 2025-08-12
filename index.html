@@ -2,409 +2,297 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MicroChallenges — 24h Skill Challenges</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Office Outing — Mini Games</title>
   <style>
-    :root{--bg:#0f172a;--card:#0f172a;--muted:#94a3b8;--accent:#7c3aed;--glass:rgba(255,255,255,0.04)}
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --success:#16a34a; --danger:#ef4444;
+      font-synthesis: none;
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Arial;background:linear-gradient(180deg,#071028,#071828);color:#e6eef6}
-    .wrap{max-width:1100px;margin:28px auto;padding:20px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    h1{margin:0;font-size:20px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .main{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    form label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type=text], select, textarea, input[type=number], input[type=datetime-local]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
-    textarea{min-height:80px}
-    .btn{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;cursor:pointer;font-weight:600}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#071029 0%, #081226 100%); color:#e6eef6; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px}
+    .container{width:100%;max-width:1100px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    header h1{font-size:20px;margin:0}
+    header p{color:var(--muted);margin:0;font-size:13px}
 
-    .list{display:flex;flex-direction:column;gap:12px}
-    .challenge{display:flex;flex-direction:column;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00))}
-    .meta{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .small{font-size:13px;color:var(--muted)}
-    .accept-list{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
-    .pill{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
+    .grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+    nav{background:var(--card);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    nav button{display:block;width:100%;background:transparent;border:0;color:inherit;padding:10px 12px;border-radius:8px;text-align:left;cursor:pointer;font-size:14px}
+    nav button.active{background:linear-gradient(90deg, rgba(6,182,212,0.12), rgba(6,182,212,0.06));border-left:3px solid var(--accent)}
 
-    .sidebar .profile{display:flex;gap:12px;align-items:center}
-    .avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#34d399,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .category-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-    .category-item{display:flex;justify-content:space-between}
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;min-height:420px;box-shadow:0 6px 28px rgba(2,6,23,0.6)}
 
-    .submission{display:flex;gap:8px;align-items:center}
-    video, img{max-width:220px;border-radius:8px}
-    .vote-btn{padding:6px 8px;border-radius:8px;border:0;background:#0b1220;color:#fff;cursor:pointer}
+    .game-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .game-title h2{margin:0;font-size:18px}
+    .controls{display:flex;gap:10px}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:inherit;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent), #60a5fa);color:#021025;border:none}
 
-    .muted{color:var(--muted)}
-    @media (max-width:980px){.main{grid-template-columns:1fr} .sidebar{order:2}}
+    /* QUIZ */
+    .quiz-question{font-size:16px;margin-bottom:12px}
+    .options{display:grid;gap:8px}
+    .option{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+    .option.correct{outline:2px solid rgba(22,163,74,0.2);border-color:var(--success);}
+    .option.wrong{outline:2px solid rgba(239,68,68,0.12);border-color:var(--danger)}
+
+    /* Memory */
+    .grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:10px}
+    .card{aspect-ratio:1/1;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;user-select:none}
+    .card.flipped{background:var(--accent);color:#01202a}
+
+    /* Reaction */
+    .playfield{position:relative;height:260px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));overflow:hidden}
+    .target{position:absolute;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;transform:translate(-50%,-50%)}
+
+    /* RPS */
+    .rps-row{display:flex;gap:12px;align-items:center}
+    .rps-btn{padding:12px 18px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);cursor:pointer}
+
+    footer.small{margin-top:14px;color:var(--muted);font-size:13px}
+
+    @media (max-width:880px){.grid{grid-template-columns:1fr;}.container{padding:8px}}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
-      <div class="brand">
-        <div class="logo">MC</div>
-        <div>
-          <h1>MicroChallenges</h1>
-          <div class="small muted">Create, accept, and share 24-hour micro-challenges</div>
-        </div>
-      </div>
       <div>
-        <button id="btnSeed" class="btn ghost">Seed demo data</button>
-        <button id="btnClear" class="btn ghost">Clear all</button>
+        <h1>Office Outing — Mini Games</h1>
+        <p>Play quick games in the browser: Quiz · Memory · Reaction · RPS — Track team scores locally</p>
+      </div>
+      <div class="controls">
+        <button id="resetScores" class="btn">Reset Scores</button>
+        <button id="download" class="btn primary">Download HTML</button>
       </div>
     </header>
 
-    <div class="main">
-      <div>
-        <div class="card">
-          <h3>Create a new 24h Challenge</h3>
-          <form id="formCreate">
-            <label>Title</label>
-            <input id="title" type="text" required placeholder="E.g. 5-minute latte art" />
+    <div class="grid">
+      <nav>
+        <button class="tab-btn active" data-tab="quiz">1 — Quiz (Trivia)</button>
+        <button class="tab-btn" data-tab="memory">2 — Memory Match</button>
+        <button class="tab-btn" data-tab="reaction">3 — Reaction Click</button>
+        <button class="tab-btn" data-tab="rps">4 — Rock Paper Scissors</button>
+        <hr style="border:none;border-top:1px dashed rgba(255,255,255,0.02);margin:10px 0">
+        <div style="font-size:13px;color:var(--muted)">Local scores</div>
+        <div id="scoreboard" style="margin-top:8px"></div>
+      </nav>
 
-            <label>Category</label>
-            <select id="category">
-              <option>Cooking</option>
-              <option>Coding</option>
-              <option>Art</option>
-              <option>Fitness</option>
-              <option>Language</option>
-              <option>Music</option>
-              <option>Other</option>
-            </select>
-
-            <label>Short description</label>
-            <textarea id="desc" placeholder="Explain the task and success criteria"></textarea>
-
-            <label>Difficulty / Points (1-100)</label>
-            <input id="points" type="number" min="1" max="100" value="30" />
-
-            <label>Deadline (must be within 24 hours from now)</label>
-            <input id="deadline" type="datetime-local" />
-
-            <div style="margin-top:10px;display:flex;gap:8px">
-              <button class="btn" type="submit">Create Challenge</button>
-              <button id="btnDemoCreate" type="button" class="btn ghost">Quick demo</button>
+      <main>
+        <div id="content">
+          <!-- QUIZ -->
+          <section id="quiz" class="tab" style="display:block">
+            <div class="game-title">
+              <h2>Trivia Quickfire</h2>
+              <div id="quiz-info" style="color:var(--muted);font-size:13px">Score: <span id="quizScore">0</span> · Q <span id="quizIndex">1</span>/5</div>
             </div>
-          </form>
+            <div class="quiz-question" id="quizQuestion">Loading...</div>
+            <div class="options" id="quizOptions"></div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button id="nextQ" class="btn">Next</button>
+              <button id="shuffleQuiz" class="btn">Shuffle Questions</button>
+            </div>
+          </section>
+
+          <!-- MEMORY -->
+          <section id="memory" class="tab" style="display:none">
+            <div class="game-title">
+              <h2>Memory Match</h2>
+              <div style="color:var(--muted);font-size:13px">Pairs found: <span id="pairsFound">0</span>/<span id="totalPairs">6</span></div>
+            </div>
+            <div class="grid-cards" id="memoryGrid"></div>
+            <div style="margin-top:12px;display:flex;gap:8px"><button id="restartMemory" class="btn">Restart</button></div>
+          </section>
+
+          <!-- REACTION -->
+          <section id="reaction" class="tab" style="display:none">
+            <div class="game-title">
+              <h2>Reaction Click</h2>
+              <div style="color:var(--muted);font-size:13px">Best time: <span id="bestTime">—</span> ms</div>
+            </div>
+            <div class="playfield" id="playfield">
+              <div id="target" class="target" style="left:50%;top:50%;">Go</div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><button id="startReaction" class="btn primary">Start</button><button id="stopReaction" class="btn">Stop</button></div>
+          </section>
+
+          <!-- RPS -->
+          <section id="rps" class="tab" style="display:none">
+            <div class="game-title">
+              <h2>Rock · Paper · Scissors</h2>
+              <div style="color:var(--muted);font-size:13px">First to 3 wins!</div>
+            </div>
+            <div style="margin-bottom:12px">Choose:</div>
+            <div class="rps-row">
+              <button class="rps-btn" data-move="rock">✊ Rock</button>
+              <button class="rps-btn" data-move="paper">🖐️ Paper</button>
+              <button class="rps-btn" data-move="scissors">✌️ Scissors</button>
+            </div>
+            <div style="margin-top:16px;color:var(--muted)">
+              <div>Round: <span id="rpsRound">0</span></div>
+              <div>Result: <span id="rpsResult">—</span></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px"><button id="resetRPS" class="btn">Reset RPS</button></div>
+          </section>
+
         </div>
 
-        <div class="card" style="margin-top:12px">
-          <h3>Active Challenges</h3>
-          <div id="challenges" class="list"></div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h3>All Submissions</h3>
-          <div id="submissions" class="list"></div>
-        </div>
-      </div>
-
-      <aside class="sidebar">
-        <div class="card profile">
-          <div class="avatar" id="avatar">U</div>
-          <div>
-            <div id="username" style="font-weight:700">You (guest)</div>
-            <div class="small muted">Local profile — points are stored in your browser</div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h4>Your Skill Points</h4>
-          <div id="skillPoints" class="category-list"></div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h4>How scoring works</h4>
-          <div class="small muted">Community members vote on each submission using three criteria: creativity, speed, and style. After the challenge ends, top submissions earn category points that appear on public profiles.</div>
-        </div>
-      </aside>
+        <footer class="small">Tip: open this file in any modern browser. Scores stored in localStorage per browser.</footer>
+      </main>
     </div>
   </div>
 
-  <!-- Modals will be created dynamically -->
-
   <script>
-    /*******************************************************************
-     * MicroChallenges — single-file demo app
-     * - Uses localStorage to persist data (no backend).
-     * - Enforces 24-hour max deadline at creation time.
-     * - Users are simulated by a local random ID stored in localStorage.
-     * - Submissions accept photo or short video (stored as dataURL).
-     * - Voting limited to one vote per user per submission, tracked locally.
-     * - Simple scoring & awarding system implemented client-side.
-     *******************************************************************/
+    /* ---------- App state ---------- */
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(btn=>btn.addEventListener('click',()=>{
+      tabs.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+      document.getElementById(btn.dataset.tab).style.display='block';
+    }));
 
-    // Utilities & storage keys
-    const LS = {CH:'mc_challenges_v1', SUB:'mc_submissions_v1', USERS:'mc_users_v1', ME:'mc_me_v1'};
-
-    function uid(len=8){return Math.random().toString(36).slice(2,2+len)}
-    function nowISO(){return new Date().toISOString()}
-
-    // Ensure a local user exists
-    let me = JSON.parse(localStorage.getItem(LS.ME) || 'null');
-    if(!me){ me = {id: uid(6), name: 'Guest-'+Math.floor(Math.random()*900+100), points:{}}; localStorage.setItem(LS.ME, JSON.stringify(me)); }
-    document.getElementById('username').textContent = me.name; document.getElementById('avatar').textContent = me.name[0] || 'U';
-
-    // Load / save
-    function load(key){return JSON.parse(localStorage.getItem(key) || '[]');}
-    function save(key, data){localStorage.setItem(key, JSON.stringify(data));}
-
-    // Initialize empty stores if missing
-    if(!localStorage.getItem(LS.CH)) save(LS.CH, []);
-    if(!localStorage.getItem(LS.SUB)) save(LS.SUB, []);
-
-    // DOM refs
-    const form = document.getElementById('formCreate');
-    const challengesEl = document.getElementById('challenges');
-    const submissionsEl = document.getElementById('submissions');
-    const skillPointsEl = document.getElementById('skillPoints');
-    const btnSeed = document.getElementById('btnSeed');
-    const btnClear = document.getElementById('btnClear');
-    const btnDemoCreate = document.getElementById('btnDemoCreate');
-
-    // Helpers
-    function within24h(dt){
-      const selected = new Date(dt);
-      const diff = selected - Date.now();
-      return diff>0 && diff <= 24*3600*1000;
+    // Scoreboard (localStorage)
+    const SCORE_KEY = 'office_outing_scores_v1';
+    let scoreboard = JSON.parse(localStorage.getItem(SCORE_KEY) || '{}');
+    function saveScores(){ localStorage.setItem(SCORE_KEY, JSON.stringify(scoreboard)); renderScores(); }
+    function renderScores(){
+      const el = document.getElementById('scoreboard');
+      if(Object.keys(scoreboard).length===0){ el.innerHTML = '<div style="color:var(--muted);font-size:13px">No scores yet — play and add a name!</div>'; return }
+      el.innerHTML = Object.entries(scoreboard).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0"><strong>${k}</strong><span style="color:var(--muted)">${v}</span></div>`).join('');
     }
+    renderScores();
+    document.getElementById('resetScores').addEventListener('click',()=>{ if(confirm('Reset all local scores?')){scoreboard={}; saveScores();}})
 
-    // Create challenge handler
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const title = document.getElementById('title').value.trim();
-      const category = document.getElementById('category').value;
-      const desc = document.getElementById('desc').value.trim();
-      const points = Math.max(1, Math.min(100, Number(document.getElementById('points').value || 30)));
-      const deadlineVal = document.getElementById('deadline').value;
-      if(!title){alert('Please add a title'); return}
-      if(!deadlineVal || !within24h(deadlineVal)){alert('Deadline must be set and within the next 24 hours'); return}
-
-      const chs = load(LS.CH);
-      const id = 'ch_'+uid(6);
-      chs.unshift({id,title,category,desc,points,creator:me.id, createdAt:nowISO(), deadline:new Date(deadlineVal).toISOString(), participants:[], finalized:false});
-      save(LS.CH, chs);
-      form.reset(); render();
+    document.getElementById('download').addEventListener('click', ()=>{
+      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='office-outing-minigames.html'; a.click(); URL.revokeObjectURL(url);
     });
 
-    btnDemoCreate.addEventListener('click', ()=>{
-      const d = new Date(Date.now()+6*3600*1000);
-      document.getElementById('title').value = '30-min Speed Sketch';
-      document.getElementById('desc').value = 'Draw a portrait in under 30 minutes — show before/after or time-lapse.';
-      document.getElementById('points').value = '40';
-      document.getElementById('deadline').value = d.toISOString().slice(0,16);
+    /* ---------- QUIZ GAME ---------- */
+    const quizData = [
+      {q:'Which country invented instant noodles?', a:['Japan','South Korea','China','USA'], correct:2},
+      {q:'What year did the internet become widely available to the public?', a:['1983','1991','1998','2004'], correct:1},
+      {q:'Which of these is NOT a JavaScript framework?', a:['React','Django','Vue','Angular'], correct:1},
+      {q:'Which planet is known as the Red Planet?', a:['Venus','Mars','Jupiter','Saturn'], correct:1},
+      {q:'How many minutes are in 2 hours and 15 minutes?', a:['125','120','135','150'], correct:0}
+    ];
+    let quizIndex=0, quizScore=0, quizOrder = shuffle([...Array(quizData.length).keys()]);
+
+    function renderQuiz(){
+      const idx = quizOrder[quizIndex];
+      document.getElementById('quizIndex').textContent = quizIndex+1;
+      document.getElementById('quizScore').textContent = quizScore;
+      const Q = quizData[idx];
+      document.getElementById('quizQuestion').textContent = Q.q;
+      const opts = document.getElementById('quizOptions'); opts.innerHTML='';
+      Q.a.forEach((opt,i)=>{
+        const d = document.createElement('div'); d.className='option'; d.textContent = opt;
+        d.addEventListener('click', ()=> handleAnswer(d,i===Q.correct));
+        opts.appendChild(d);
+      });
+    }
+    function handleAnswer(el,correct){
+      // disable options
+      document.querySelectorAll('#quizOptions .option').forEach(o=>o.style.pointerEvents='none');
+      if(correct){ el.classList.add('correct'); quizScore+=10; document.getElementById('quizScore').textContent=quizScore; }
+      else{ el.classList.add('wrong'); // highlight correct
+        const idx = quizOrder[quizIndex]; const corr = quizData[idx].correct;
+        document.querySelectorAll('#quizOptions .option')[corr].classList.add('correct');
+      }
+      // prompt to add name to scoreboard
+      setTimeout(()=>{
+        const name = prompt('Enter team/player name to save score (or Cancel):');
+        if(name){ scoreboard[name] = Math.max(scoreboard[name]||0, quizScore); saveScores(); }
+      },400);
+    }
+
+    document.getElementById('nextQ').addEventListener('click', ()=>{
+      quizIndex = (quizIndex+1) % quizOrder.length;
+      renderQuiz();
     });
+    document.getElementById('shuffleQuiz').addEventListener('click', ()=>{ quizOrder = shuffle([...Array(quizData.length).keys()]); quizIndex=0; quizScore=0; renderQuiz(); });
+    renderQuiz();
 
-    // Accept challenge (join)
-    function acceptChallenge(chId){
-      const chs = load(LS.CH);
-      const ch = chs.find(c=>c.id===chId); if(!ch) return;
-      if(ch.participants.includes(me.id)) { alert('You already accepted'); return }
-      ch.participants.push(me.id); save(LS.CH, chs); render();
-    }
-
-    // Open submission modal
-    function openSubmissionModal(chId){
-      const modal = document.createElement('div');
-      modal.style.position='fixed'; modal.style.inset=0; modal.style.display='flex'; modal.style.alignItems='center'; modal.style.justifyContent='center'; modal.style.background='rgba(2,6,23,0.6)'; modal.style.zIndex=9999;
-      modal.innerHTML = `
-        <div style="width:680px;max-width:96%;background:linear-gradient(180deg, #061226, #071829);padding:14px;border-radius:12px">
-          <h3 style="margin-top:0">Submit Proof</h3>
-          <div id="modalInfo" class="small muted"></div>
-          <div style="margin-top:8px">
-            <label class="small muted">Add a short photo or video (max ~30MB)</label>
-            <input id="fileProof" type="file" accept="image/*,video/*" />
-          </div>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button id="submitProofBtn" class="btn">Submit</button>
-            <button id="cancelProofBtn" class="btn ghost">Cancel</button>
-          </div>
-          <div id="previewArea" style="margin-top:10px"></div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-
-      const fileInput = modal.querySelector('#fileProof');
-      const preview = modal.querySelector('#previewArea');
-      const info = modal.querySelector('#modalInfo');
-      info.textContent = 'Challenge ID: ' + chId;
-
-      fileInput.addEventListener('change', ()=>{
-        preview.innerHTML='';
-        const f = fileInput.files[0];
-        if(!f) return;
-        if(f.size > 32*1024*1024){ alert('File too big (max 32MB)'); fileInput.value=''; return }
-        const reader = new FileReader();
-        reader.onload = ()=>{
-          const url = reader.result;
-          if(f.type.startsWith('video/')){ preview.innerHTML = `<video controls src="${url}"></video>` }
-          else { preview.innerHTML = `<img src="${url}" />` }
-        };
-        reader.readAsDataURL(f);
+    /* ---------- MEMORY GAME ---------- */
+    const icons = ['🍎','🍌','🍇','🍓','🍍','🥝','🍑','🍒'];
+    let memoryPairs = 6; // initial
+    function startMemory(){
+      const grid = document.getElementById('memoryGrid'); grid.innerHTML='';
+      const pairs = icons.slice(0,memoryPairs);
+      const deck = shuffle([...pairs,...pairs]);
+      document.getElementById('totalPairs').textContent = memoryPairs;
+      let flippedIndex = null; let found = 0;
+      deck.forEach((val,i)=>{
+        const c = document.createElement('div'); c.className='card'; c.dataset.val=val; c.dataset.idx=i; c.textContent='?';
+        c.addEventListener('click', ()=>{
+          if(c.classList.contains('flipped') || c.classList.contains('found')) return;
+          c.classList.add('flipped'); c.textContent = val;
+          if(flippedIndex===null){ flippedIndex = i; }
+          else{
+            const first = grid.querySelector('[data-idx="'+flippedIndex+'"]');
+            if(first.dataset.val === c.dataset.val){ // matched
+              first.classList.add('found'); c.classList.add('found'); found++; document.getElementById('pairsFound').textContent = found;
+              if(found===memoryPairs){ setTimeout(()=>{ const name=prompt('You matched all pairs! Save score name?'); if(name){ scoreboard[name] = (scoreboard[name]||0)+100; saveScores(); }},300) }
+            } else { // not matched
+              setTimeout(()=>{ first.classList.remove('flipped'); first.textContent='?'; c.classList.remove('flipped'); c.textContent='?'; },800);
+            }
+            flippedIndex = null;
+          }
+        });
+        grid.appendChild(c);
       });
-
-      modal.querySelector('#cancelProofBtn').addEventListener('click', ()=> modal.remove());
-
-      modal.querySelector('#submitProofBtn').addEventListener('click', ()=>{
-        const f = fileInput.files[0]; if(!f){ alert('Choose a file first'); return }
-        const reader = new FileReader();
-        reader.onload = ()=>{
-          const subs = load(LS.SUB);
-          const id = 's_'+uid(6);
-          subs.unshift({id, challengeId:chId, author:me.id, fileData:reader.result, fileType:f.type, createdAt:nowISO(), votes:{creativity:{},speed:{},style:{}}, score:0});
-          save(LS.SUB, subs);
-          modal.remove(); render();
-        };
-        reader.readAsDataURL(f);
-      });
+      document.getElementById('pairsFound').textContent = 0;
     }
+    document.getElementById('restartMemory').addEventListener('click', ()=> startMemory());
+    startMemory();
 
-    // Voting
-    function vote(subId, criterion){
-      const subs = load(LS.SUB);
-      const sub = subs.find(s=>s.id===subId); if(!sub) return;
-      // prevent same user voting twice on same criterion
-      if(sub.votes[criterion][me.id]){ alert('You already voted on this criterion for this submission'); return }
-      sub.votes[criterion][me.id] = 1; // simple +1 vote
-      // recompute score: weights: creativity=3, speed=2, style=2
-      const c = Object.keys(sub.votes.creativity).length;
-      const sp = Object.keys(sub.votes.speed).length;
-      const st = Object.keys(sub.votes.style).length;
-      sub.score = c*3 + sp*2 + st*2;
-      save(LS.SUB, subs); render();
+    /* ---------- REACTION GAME ---------- */
+    let reactionRunning=false; let targetTimer=null; let startTime=0; let best=Infinity;
+    const playfield = document.getElementById('playfield'); const target = document.getElementById('target');
+    function randomPos(){
+      const w = playfield.clientWidth; const h = playfield.clientHeight; const x = Math.random()*(w-80)+40; const y = Math.random()*(h-80)+40; return {x,y};
     }
-
-    // Finalize challenge (determine winners and award points) — manual trigger
-    function finalizeChallenge(chId){
-      const chs = load(LS.CH); const subs = load(LS.SUB);
-      const ch = chs.find(c=>c.id===chId); if(!ch) return;
-      if(ch.finalized){ alert('Already finalized'); return }
-      const related = subs.filter(s=>s.challengeId===chId);
-      if(related.length===0){ alert('No submissions yet'); return }
-      // sort by score descending
-      related.sort((a,b)=>b.score - a.score);
-      const winner = related[0];
-      // award points: winner gets challenge.points, 2nd gets half, 3rd gets quarter
-      const award = (sub)=>{
-        const users = JSON.parse(localStorage.getItem(LS.USERS) || '{}');
-        const uid = sub.author;
-        users[uid] = users[uid] || {id:uid, name: (uid===me.id?me.name:'User-'+uid.slice(-3)), points:{}};
-        users[uid].points[ch.category] = (users[uid].points[ch.category] || 0) + (sub===winner? ch.points : (related.indexOf(sub)===1? Math.floor(ch.points/2) : (related.indexOf(sub)===2? Math.floor(ch.points/4) : 0)));
-        localStorage.setItem(LS.USERS, JSON.stringify(users));
-      };
-      related.forEach(award);
-      ch.finalized = true; save(LS.CH, chs);
-      alert('Challenge finalized. Winner: ' + (winner? winner.author : '—'));
-      render();
+    function placeTarget(){ const p=randomPos(); target.style.left = p.x+'px'; target.style.top = p.y+'px'; }
+    function startReaction(){ if(reactionRunning) return; reactionRunning=true; target.textContent='WAIT'; target.style.pointerEvents='none';
+      const delay = Math.random()*2000+800; targetTimer = setTimeout(()=>{ placeTarget(); target.textContent='CLICK'; target.style.pointerEvents='auto'; startTime = performance.now(); }, delay);
     }
-
-    // Render functions
-    function render(){
-      // Challenges
-      const chs = load(LS.CH).sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
-      challengesEl.innerHTML='';
-      chs.forEach(ch=>{
-        const el = document.createElement('div'); el.className='challenge';
-        const timeLeft = new Date(ch.deadline) - Date.now();
-        const ended = timeLeft<=0;
-        el.innerHTML = `
-          <div class="row"><div>
-            <strong>${escapeHtml(ch.title)}</strong>
-            <div class="meta">${ch.category} • ${ch.points} pts • created ${new Date(ch.createdAt).toLocaleString()}</div>
-          </div>
-          <div class="small">${ended?'<span style="color:#fb7185">Ended</span>':'<span class="muted">Ends in '+msToTime(timeLeft)+'</span>'}</div></div>
-          <div style="margin-top:8px" class="small muted">${escapeHtml(ch.desc)}</div>
-          <div class="accept-list" style="margin-top:8px">
-            <div class="pill">Participants: ${ch.participants.length}</div>
-            ${ch.finalized?'<div class="pill">Finalized</div>':''}
-          </div>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button class="btn" onclick="openSubmissionModal('${ch.id}')">Submit proof</button>
-            <button class="btn ghost" onclick="acceptChallenge('${ch.id}')">Accept</button>
-            <button class="btn ghost" onclick="finalizeChallenge('${ch.id}')">Finalize</button>
-          </div>
-        `;
-        challengesEl.appendChild(el);
-      });
-
-      // Submissions list
-      const subs = load(LS.SUB);
-      submissionsEl.innerHTML='';
-      subs.forEach(s=>{
-        const el = document.createElement('div'); el.className='challenge';
-        const c = getChallengeById(s.challengeId);
-        const authorName = getUserName(s.author);
-        let mediaHtml = '';
-        if(s.fileType && s.fileType.startsWith('video/')) mediaHtml = `<video controls src="${s.fileData}"></video>`;
-        else mediaHtml = `<img src="${s.fileData}" />`;
-        el.innerHTML = `
-          <div class="row"><div>
-            <strong>${escapeHtml(c?c.title:'(challenge removed)')}</strong>
-            <div class="meta">by ${authorName} • score ${s.score}</div>
-          </div>
-          <div class="small muted">${new Date(s.createdAt).toLocaleString()}</div></div>
-          <div style="margin-top:8px;display:flex;gap:12px;align-items:flex-start">
-            <div>${mediaHtml}</div>
-            <div style="flex:1">
-              <div class="small muted">Vote for this submission</div>
-              <div style="margin-top:8px;display:flex;gap:8px">
-                <button class="vote-btn" onclick="vote('${s.id}','creativity')">Creativity (${Object.keys(s.votes.creativity).length})</button>
-                <button class="vote-btn" onclick="vote('${s.id}','speed')">Speed (${Object.keys(s.votes.speed).length})</button>
-                <button class="vote-btn" onclick="vote('${s.id}','style')">Style (${Object.keys(s.votes.style).length})</button>
-              </div>
-            </div>
-          </div>
-        `;
-        submissionsEl.appendChild(el);
-      });
-
-      // Skill points (public)
-      const users = JSON.parse(localStorage.getItem(LS.USERS) || '{}');
-      // ensure me is present
-      users[me.id] = users[me.id] || {id:me.id, name:me.name, points: me.points || {}};
-      skillPointsEl.innerHTML='';
-      const myPoints = users[me.id].points || {};
-      const keys = Object.keys(myPoints);
-      if(keys.length===0) skillPointsEl.innerHTML = '<div class="muted">No points yet — submit and win challenges to earn points!</div>';
-      else keys.forEach(k=>{
-        const div = document.createElement('div'); div.className='category-item'; div.innerHTML = `<div>${k}</div><div>${myPoints[k]} pts</div>`; skillPointsEl.appendChild(div);
-      });
-    }
-
-    // Helpers used in render
-    function getChallengeById(id){ return load(LS.CH).find(c=>c.id===id); }
-    function getUserName(id){ if(id===me.id) return me.name; const users = JSON.parse(localStorage.getItem(LS.USERS) || '{}'); return (users[id] && users[id].name) || ('User-'+id.slice(-4)); }
-    function msToTime(ms){ if(ms<=0) return '0s'; const s = Math.floor(ms/1000); const h=Math.floor(s/3600); const m=Math.floor((s%3600)/60); const sec=s%60; return (h? h+'h ':'') + (m? m+'m ':'') + sec+'s'; }
-    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-    // Seed demo data
-    btnSeed.addEventListener('click', ()=>{
-      const chs = [
-        {id:'ch_demo1', title:'60s Coffee Pour Art', category:'Cooking', desc:'Create a coffee pour art in 60 seconds. Show start and finish.', points:30, creator:me.id, createdAt:nowISO(), deadline:new Date(Date.now()+5*3600*1000).toISOString(), participants:[], finalized:false},
-        {id:'ch_demo2', title:'Solve FizzBuzz in 10 minutes', category:'Coding', desc:'Record your screen solving FizzBuzz in under 10 minutes.', points:40, creator:me.id, createdAt:nowISO(), deadline:new Date(Date.now()+8*3600*1000).toISOString(), participants:[], finalized:false}
-      ];
-      save(LS.CH, chs);
-      save(LS.SUB, []);
-      localStorage.setItem(LS.USERS, JSON.stringify({}));
-      render();
-      alert('Demo challenges seeded');
+    function stopReaction(){ reactionRunning=false; clearTimeout(targetTimer); target.textContent='Go'; target.style.pointerEvents='none'; }
+    target.addEventListener('click', ()=>{
+      if(!reactionRunning || startTime===0) return; const t = Math.round(performance.now()-startTime); startTime=0; reactionRunning=false; target.style.pointerEvents='none';
+      alert('Reaction: '+t+' ms'); if(t<best){ best=t; document.getElementById('bestTime').textContent = best; const name=prompt('New best! Save name?'); if(name){ scoreboard[name] = Math.max(scoreboard[name]||0, best); saveScores(); }}
     });
+    document.getElementById('startReaction').addEventListener('click', startReaction);
+    document.getElementById('stopReaction').addEventListener('click', stopReaction);
 
-    btnClear.addEventListener('click', ()=>{ if(!confirm('Clear all data stored locally?')) return; localStorage.removeItem(LS.CH); localStorage.removeItem(LS.SUB); localStorage.removeItem(LS.USERS); save(LS.CH, []); save(LS.SUB, []); render(); });
+    /* ---------- RPS ---------- */
+    let rpsRound=0; let rpsScore = {you:0,bot:0};
+    function playRPS(move){ const choices=['rock','paper','scissors']; const bot = choices[Math.floor(Math.random()*3)];
+      rpsRound++; document.getElementById('rpsRound').textContent = rpsRound;
+      let outcome='Draw';
+      if(move===bot) outcome='Draw';
+      else if((move==='rock'&&bot==='scissors')||(move==='paper'&&bot==='rock')||(move==='scissors'&&bot==='paper')){ outcome='You win'; rpsScore.you++; }
+      else{ outcome='Bot wins'; rpsScore.bot++; }
+      document.getElementById('rpsResult').textContent = `You: ${move} — Bot: ${bot} · ${outcome} (You ${rpsScore.you} : Bot ${rpsScore.bot})`;
+      if(rpsScore.you===3 || rpsScore.bot===3){ setTimeout(()=>{
+        const winner = rpsScore.you>rpsScore.bot? 'You' : 'Bot'; const name = prompt(`${winner} reached 3 wins! Save name to scoreboard?`);
+        if(name){ scoreboard[name] = (scoreboard[name]||0) + (rpsScore.you>rpsScore.bot? 300: 50); saveScores(); }
+      },200);
+      }
+    }
+    document.querySelectorAll('.rps-btn').forEach(b=>b.addEventListener('click', ()=> playRPS(b.dataset.move)));
+    document.getElementById('resetRPS').addEventListener('click', ()=>{ rpsRound=0; rpsScore={you:0,bot:0}; document.getElementById('rpsRound').textContent=0; document.getElementById('rpsResult').textContent='—'; });
 
-    // Expose some functions globally so buttons in HTML can call them
-    window.openSubmissionModal = openSubmissionModal;
-    window.acceptChallenge = acceptChallenge;
-    window.vote = vote;
-    window.finalizeChallenge = finalizeChallenge;
+    /* ---------- Utilities ---------- */
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+      return arr;
+    }
 
-    // Initial render
-    render();
+    // small UI: when switching tabs stop running timers
+    document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click', ()=>{ stopReaction(); }));
 
   </script>
 </body>
