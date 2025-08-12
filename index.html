@@ -65,6 +65,7 @@
       </div>
 
       <ul id="list" class="list" aria-live="polite" aria-label="Saved URLs"></ul>
+      <div id="pagination" style="display:flex;justify-content:center;gap:10px;margin-top:10px;"></div>
     </section>
 
     <footer style="margin-top:14px;color:var(--muted);font-size:13px;text-align:center">AGP©2025</footer>
@@ -74,6 +75,8 @@
     // Simple accessible URL list app that stores data in localStorage
     const KEY = 'simple_url_list_v1';
     let data = JSON.parse(localStorage.getItem(KEY) || '[]');
+    let currentPage = 1; 
+    const itemsPerPage = 6;
 
     const listEl = document.getElementById('list');
     const countEl = document.getElementById('count');
@@ -104,55 +107,78 @@
 
     function render(){
       // sort
-      let out = [...data];
-      const sort = sortSelect.value;
-      if(sort==='alpha') out.sort((a,b)=>a.title.localeCompare(b.title));
-      else if(sort==='old') out.reverse(); // because newest are at start
+       // sort
+  let out = [...data];
+  const sort = sortSelect.value;
+  if(sort==='alpha') out.sort((a,b)=>a.title.localeCompare(b.title));
+  else if(sort==='old') out.reverse(); // because newest are at start
 
-      const q = searchInput.value.trim().toLowerCase();
-      if(q) out = out.filter(i => (i.title + ' ' + i.url).toLowerCase().includes(q));
+  const q = searchInput.value.trim().toLowerCase();
+  if(q) out = out.filter(i => (i.title + ' ' + i.url).toLowerCase().includes(q));
 
-      listEl.innerHTML = '';
-      if(out.length===0){ listEl.innerHTML='<li class="muted">No URLs yet. Add one above.</li>'; }
-      out.forEach(item => {
-        const li = document.createElement('li'); li.className='item';
+  countEl.textContent = data.length;
 
-        const fav = document.createElement('div'); fav.className='favicon';
-        // simple favicon: first letter
-        fav.textContent = (item.title || item.url)[0].toUpperCase();
+  // pagination logic
+  const totalPages = Math.ceil(out.length / itemsPerPage);
+  if (currentPage > totalPages) currentPage = totalPages || 1;
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const paginatedItems = out.slice(start, end);
 
-        const meta = document.createElement('div'); meta.className='meta';
-        const a = document.createElement('a'); a.href = item.url; a.target='_blank'; a.rel='noopener'; a.textContent = item.title;
-        a.title = item.url;
-        const small = document.createElement('div'); small.className='muted'; small.textContent = item.url;
-        meta.appendChild(a); meta.appendChild(small);
+  listEl.innerHTML = '';
+  if(paginatedItems.length === 0){ 
+    listEl.innerHTML='<li class="muted">No URLs yet. Add one above.</li>'; 
+  }
+  paginatedItems.forEach(item => {
+    const li = document.createElement('li'); li.className='item';
 
-        const actions = document.createElement('div'); actions.className='actions';
-        // open
-        const openBtn = document.createElement('button'); openBtn.className='small'; openBtn.textContent='Open';
-        openBtn.addEventListener('click', ()=>openInNewTab(item.url));
-        // copy
-        const copyBtn = document.createElement('button'); copyBtn.className='small'; copyBtn.textContent='Copy';
-        copyBtn.addEventListener('click', ()=>{ copyToClipboard(item.url); copyBtn.textContent='Copied'; setTimeout(()=>copyBtn.textContent='Copy',900); });
-        // edit
-        const editBtn = document.createElement('button'); editBtn.className='small'; editBtn.textContent='Edit';
-        editBtn.addEventListener('click', ()=>{
-          const newTitle = prompt('Edit title', item.title) || item.title;
-          const newUrl = prompt('Edit URL', item.url) || item.url;
-          if(!validateUrl(newUrl)){ alert('Invalid URL. Update cancelled.'); return; }
-          editItem(item.id,newTitle,newUrl);
-        });
-        // delete
-        const delBtn = document.createElement('button'); delBtn.className='small'; delBtn.textContent='Delete';
-        delBtn.addEventListener('click', ()=>{ if(confirm('Delete this URL?')) removeItem(item.id); });
+    const fav = document.createElement('div'); fav.className='favicon';
+    fav.textContent = (item.title || item.url)[0].toUpperCase();
 
-        actions.appendChild(openBtn); actions.appendChild(copyBtn); actions.appendChild(editBtn); actions.appendChild(delBtn);
+    const meta = document.createElement('div'); meta.className='meta';
+    const a = document.createElement('a'); a.href = item.url; a.target='_blank'; a.rel='noopener'; a.textContent = item.title;
+    a.title = item.url;
+    meta.appendChild(a);
 
-        li.appendChild(fav); li.appendChild(meta); li.appendChild(actions);
-        listEl.appendChild(li);
-      });
+    const actions = document.createElement('div'); actions.className='actions';
+    const openBtn = document.createElement('button'); openBtn.className='small'; openBtn.textContent='Open';
+    openBtn.addEventListener('click', ()=>openInNewTab(item.url));
+    const copyBtn = document.createElement('button'); copyBtn.className='small'; copyBtn.textContent='Copy';
+    copyBtn.addEventListener('click', ()=>{ copyToClipboard(item.url); copyBtn.textContent='Copied'; setTimeout(()=>copyBtn.textContent='Copy',900); });
+    const editBtn = document.createElement('button'); editBtn.className='small'; editBtn.textContent='Edit';
+    editBtn.addEventListener('click', ()=>{
+      const newTitle = prompt('Edit title', item.title) || item.title;
+      const newUrl = prompt('Edit URL', item.url) || item.url;
+      if(!validateUrl(newUrl)){ alert('Invalid URL. Update cancelled.'); return; }
+      editItem(item.id,newTitle,newUrl);
+    });
+    const delBtn = document.createElement('button'); delBtn.className='small delete-btn'; delBtn.textContent='Delete';
+    delBtn.addEventListener('click', ()=>{ if(confirm('Delete this URL?')) removeItem(item.id); });
 
-      countEl.textContent = data.length;
+    actions.append(openBtn, copyBtn, editBtn, delBtn);
+    li.append(fav, meta, actions);
+    listEl.appendChild(li);
+  });
+
+  // pagination controls
+  const paginationEl = document.getElementById('pagination');
+  paginationEl.innerHTML = '';
+  if(totalPages > 1){
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Previous';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = ()=>{ currentPage--; render(); };
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = ()=>{ currentPage++; render(); };
+
+    const pageInfo = document.createElement('span');
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+    paginationEl.append(prevBtn, pageInfo, nextBtn);
+  }
     }
 
     addForm.addEventListener('submit', (e)=>{
